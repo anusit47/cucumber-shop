@@ -10,6 +10,7 @@ public class BuyStepdefs {
 
     private ProductCatalog catalog;
     private Order order;
+    private Exception error;
 
     @Given("the store is ready to service customers")
     public void the_store_is_ready_to_service_customers() {
@@ -32,5 +33,24 @@ public class BuyStepdefs {
     public void total_should_be(double total) {
         assertEquals(total, order.getTotal());
     }
-}
 
+    @When("I try to buy {string} with quantity {int}")
+    public void i_try_to_buy_with_quantity(String name, int quantity) {
+        Product prod = catalog.getProduct(name);
+        try {
+            order.addItem(prod, quantity); 
+            error = null; 
+        } catch (Exception e) {
+            error = e;
+        }
+    }
+
+    @Then("the purchase should be rejected")
+    public void the_purchase_should_be_rejected() {
+        org.junit.jupiter.api.Assertions.assertNotNull(error, "Expected an error but none thrown");
+        org.junit.jupiter.api.Assertions.assertTrue(
+                error instanceof NotEnoughStockException,
+                "Expected NotEnoughStockException but got " + (error == null ? "null" : error.getClass()));
+    }
+
+}

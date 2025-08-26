@@ -12,21 +12,32 @@ public class Product {
     }
 
     public void cutStock(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("quantity must be positive");
+        }
+        if (quantity > stock) {
+            throw new NotEnoughStockException(
+                    "Not enough stock of " + name + " (have " + stock + ", need " + quantity + ")");
+        }
         stock -= quantity;
     }
 
     public String getName() {
         return name;
     }
+
     public double getPrice() {
         return price;
     }
+
     public int getStock() {
         return stock;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public void setPrice(double price) {
         this.price = price;
     }
